@@ -1,10 +1,17 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var axios_1 = __importDefault(require("axios"));
-var SuapApi = axios_1.default.create({
-    baseURL: 'https://suap.ifrn.edu.br/api/v2',
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-exports.default = SuapApi;
+exports.default = void 0;
+
+var _axios = _interopRequireDefault(require("axios"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const SuapApi = _axios.default.create({
+  baseURL: 'https://suap.ifrn.edu.br/api/v2'
+});
+
+var _default = SuapApi;
+exports.default = _default;

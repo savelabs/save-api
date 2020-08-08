@@ -1,10 +1,17 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var students_router_1 = __importDefault(require("./students.router"));
-var routes = express_1.Router();
-routes.use('/students', students_router_1.default);
-exports.default = routes;
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _express = require("express");
+
+var _students = _interopRequireDefault(require("./students.router"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const routes = (0, _express.Router)();
+routes.use('/students', _students.default);
+var _default = routes;
+exports.default = _default;
