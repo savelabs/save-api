@@ -24,7 +24,7 @@ jobs:
     - name: Run build
       run: yarn build
       
-    # Copiar pasta dist para dentro do Azure
+    # Copiar código para dentro do Azure
     - name: Copy dist to Azure
       uses: appleboy/scp-action@master
       with:
@@ -32,6 +32,41 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_KEY }}
-        source: "."
+        source: ".,!node_modules"
         target: "~/app/save-api"
     
+    # Executar yarn no Azure
+    - name: Install dependencies on Azure
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd ~/app/save-api
+          yarn
+          
+    # Executar migrations do TypeORM
+    - name: Run migrations on Azure
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd ~/app/save-api
+          ./node_modules/.bin/typeorm migration:run
+          
+    # Executar migrations do TypeORM
+    - name: Restart server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        script: pm2 restart saveapi
+    
+
