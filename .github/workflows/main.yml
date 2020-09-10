@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.1.1
+      with: 
+        node-version: 12.x
+        
+    # Instalar as dependêndicas do NPM/Yarn
+    - name: Install dependencies
+      run: yarn
+    
+    # Executar a build
+    - name: Run build
+      run: yarn build
+      
+    # Copiar código para dentro do Azure
+    - name: Copy dist to Azure
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        source: ".,!node_modules"
+        target: "~/app/save-api"
+    
+    # Executar yarn no Azure
+    - name: Run production scripts
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd ~/app/save-api
+          yarn
+          ./node_modules/.bin/typeorm migration:run
+          pm2 restart saveapi
+      
