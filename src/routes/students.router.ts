@@ -70,7 +70,6 @@ studentsRouter.post('/', async (request, response) => {
         paramMatricula: matricula,
         token,
       });
-
       return response.json({ student, token });
     });
 });
