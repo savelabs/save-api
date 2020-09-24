@@ -59,6 +59,9 @@ class Student {
   @Column('boolean')
   admin: boolean;
 
+  @Column()
+  pushtoken: string;
+
   @CreateDateColumn()
   created_at: Date;
 
