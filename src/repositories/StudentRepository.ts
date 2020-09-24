@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, Not, IsNull } from 'typeorm';
 
 import Student from '../models/Student';
 
@@ -17,23 +17,24 @@ class StudentRepository extends Repository<Student> {
   }: Data): Promise<Student[]> {
     if (turma) {
       const studentTurma = await this.find({
-        where: { turma },
+        where: { turma, pushtoken: Not(IsNull()) },
       });
+
       return studentTurma;
     }
     if (campus) {
       const studentCampus = await this.find({
-        where: { campus },
+        where: { campus, pushtoken: Not(IsNull()) },
       });
       return studentCampus;
     }
     if (matricula) {
       const studentMat = await this.find({
-        where: { matricula },
+        where: { matricula, pushtoken: Not(IsNull()) },
       });
       return studentMat;
     }
-    return this.find();
+    return this.find({ where: { pushtoken: Not(IsNull()) } });
   }
 }
 
