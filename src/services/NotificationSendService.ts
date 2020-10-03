@@ -1,5 +1,4 @@
 import { getCustomRepository } from 'typeorm';
-import { AxiosResponse } from 'axios';
 import { SendNotification } from './api';
 import StudentsRepository from '../repositories/StudentRepository';
 
@@ -22,7 +21,7 @@ class NotificationSendService {
     turma = null,
     campus = null,
     matricula = null,
-  }: Request): Promise<AxiosResponse> {
+  }: Request): Promise<any> {
     const studentsRepository = getCustomRepository(StudentsRepository);
 
     const student = await studentsRepository.findOne({
@@ -47,18 +46,30 @@ class NotificationSendService {
       matricula,
     });
 
+    const batch: Array<any> = [];
     const adress = students.map(user => user.pushtoken);
+    const lenghtAdress = adress.length;
+    let i = 0;
 
-    try {
-      const response = await SendNotification.post('/send', {
-        to: adress,
-        title,
-        body,
-      });
-      return response.data;
-    } catch (err) {
-      throw new AppError('Não foi possível enviar a notificação!', 400);
+    for (i = 0; i < lenghtAdress; i += 100) {
+      const myArray = adress.slice(i, i + 100);
+      batch.push(myArray);
     }
+
+    batch.map(async (adresses: Array<string>) => {
+      try {
+        const response = await SendNotification.post('/send', {
+          to: adresses,
+          title,
+          body,
+        });
+        return response.data;
+      } catch (err) {
+        throw new AppError('Não foi possível enviar a notificação!', 400);
+      }
+    });
+
+    return { message: 'Enviado com sucesso!' };
   }
 }
 
