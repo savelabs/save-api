@@ -97,9 +97,11 @@ studentsRouter.delete(
   async (request, response) => {
     const deleteAvatarProfile = new DeleteAvatarStudentService();
 
-    const delete = await deleteAvatarProfile.execute({
+    const deleteAvatar = await deleteAvatarProfile.execute({
       student_id: request.student.id,
-    })
+    });
+
+    return response.json(deleteAvatar);
   },
 );
 
