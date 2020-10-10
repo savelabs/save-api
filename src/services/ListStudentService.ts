@@ -16,7 +16,7 @@ class ListStudentService {
     });
 
     if (!student) {
-      throw new AppError('Não autorizado', 401);
+      throw new AppError('Não autorizado.', 401);
     }
 
     return student;

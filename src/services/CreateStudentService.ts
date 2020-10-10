@@ -63,7 +63,7 @@ class CreateStudentService {
       }: Response & Student = response.data.vinculo;
 
       if (matricula !== paramMatricula) {
-        throw new AppError('Matriculas diferentes');
+        throw new AppError('Verifique a sua matrícula.');
       }
 
       const student = studentsRepository.create({
@@ -86,7 +86,7 @@ class CreateStudentService {
 
       return student;
     } catch {
-      throw new AppError('Token inválido', 401);
+      throw new AppError('Não foi possível criar uma conta.', 401);
     }
   }
 }

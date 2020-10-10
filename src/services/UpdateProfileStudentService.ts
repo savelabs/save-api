@@ -23,7 +23,7 @@ class UpdateAvatarStudentService {
 
     if (!student) {
       throw new AppError(
-        'Somente estudantes autenticados podem alterar dados',
+        'Somente estudantes autenticados podem alterar dados.',
         401,
       );
     }

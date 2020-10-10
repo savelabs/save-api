@@ -7,6 +7,7 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 import CreateStudentService from '../services/CreateStudentService';
 import UpdateAvatarStudentService from '../services/UpdateAvatarStudentService';
+import DeleteAvatarStudentService from '../services/DeleteAvatarStudentService';
 import UpdateProfileStudentService from '../services/UpdateProfileStudentService';
 import ListStudentService from '../services/ListStudentService';
 import ListAdminStudentService from '../services/ListAdminStudentService';
@@ -87,6 +88,18 @@ studentsRouter.put(
     });
 
     return response.json(update);
+  },
+);
+
+studentsRouter.delete(
+  '/avatar',
+  ensureAuthenticated,
+  async (request, response) => {
+    const deleteAvatarProfile = new DeleteAvatarStudentService();
+
+    const delete = await deleteAvatarProfile.execute({
+      student_id: request.student.id,
+    })
   },
 );
 

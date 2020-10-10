@@ -16,11 +16,11 @@ class ListAdminStudentService {
     });
 
     if (!student) {
-      throw new AppError('Não autorizado', 401);
+      throw new AppError('Não autorizado.', 401);
     }
 
     if (!student.admin) {
-      throw new AppError('Somente admins estão autorizados', 401);
+      throw new AppError('Somente admins estão autorizados.', 401);
     }
 
     const students = studentsRepository.findAndCount();

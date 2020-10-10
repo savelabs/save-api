@@ -45,7 +45,7 @@ class UpdateStudentService {
       }: Response & Student = response.data.vinculo;
 
       if (matricula !== paramMatricula) {
-        throw new AppError('Matriculas diferentes', 401);
+        throw new AppError('Matriculas diferentes.', 401);
       }
 
       const student = await studentsRepository.findOne({
@@ -53,7 +53,7 @@ class UpdateStudentService {
       });
 
       if (!student) {
-        throw new AppError('Estudante não existe');
+        throw new AppError('Este estudante não existe.');
       }
 
       student.nomeUsual = nomeUsual;
@@ -70,7 +70,7 @@ class UpdateStudentService {
 
       return studentUpdated;
     } catch {
-      throw new AppError('Token inválido', 401);
+      throw new AppError('Por favor, verifique seus dados.', 401);
     }
   }
 }

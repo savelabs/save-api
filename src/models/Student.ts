@@ -36,10 +36,10 @@ class Student {
   avatarSuap: string;
 
   @Column()
-  avatarSave: string;
+  avatarSave: string | null;
 
   @Column()
-  avatarSaveURL: string;
+  avatarSaveURL: string | null;
 
   @Column()
   nomeCompleto: string;

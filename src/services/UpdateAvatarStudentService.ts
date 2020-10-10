@@ -18,7 +18,7 @@ class UpdateAvatarStudentService {
     });
 
     if (!student) {
-      throw new Error('Somente estudantes autenticados podem mudar o avatar');
+      throw new Error('Esteja autenticado para mudar sua foto.');
     }
 
     if (student.avatarSave) {
@@ -29,7 +29,7 @@ class UpdateAvatarStudentService {
 
       blobService.deleteBlobIfExists('avatar', nomeAvatarAnterior, err => {
         if (err) {
-          throw new AppError('Erro ao atualizar avatar');
+          throw new AppError('Erro ao atualizar foto de perfil.');
         }
       });
     }

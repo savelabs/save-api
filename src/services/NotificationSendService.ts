@@ -29,15 +29,15 @@ class NotificationSendService {
     });
 
     if (!student) {
-      throw new AppError('Não autorizado', 401);
+      throw new AppError('Não autorizado.', 401);
     }
 
     if (!student.admin) {
-      throw new AppError('Somente admins estão autorizados', 401);
+      throw new AppError('Somente admins estão autorizados.', 401);
     }
 
     if (!title || !body) {
-      throw new AppError('Preencha os campos obrigatórios', 401);
+      throw new AppError('Preencha os campos obrigatórios.', 401);
     }
 
     const students = await studentsRepository.findByData({
