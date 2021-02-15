@@ -5,12 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "pwa-msedge",
+      "type": "node",
       "request": "attach",
+      "protocol": "inspector",
       "restart": true,
       "name": "Debug",
-      "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}"
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/*/*.js"
+      ]
     }
   ]
 }

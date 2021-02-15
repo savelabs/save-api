@@ -1,4 +1,9 @@
+.idea/
+.vscode/
 node_modules/
+build/
+tempo/
 .env
+coverage
 ormconfig.json
 dist
