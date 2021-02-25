@@ -9,7 +9,6 @@ export default async function ensureAuthenticate(
   next: NextFunction,
 ): Promise<void> {
   // Validação do Token
-
   const authHeader = request.headers.authorization;
 
   if (!authHeader) {

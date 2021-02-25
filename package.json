@@ -21,6 +21,7 @@
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "ioredis": "^4.22.0",
+    "mongodb": "^3.6.4",
     "multer": "^1.4.2",
     "multer-azure-blob-storage": "^1.0.2",
     "pg": "^8.3.0",

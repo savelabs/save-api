@@ -8,6 +8,7 @@ interface Request {
   student_id: string;
   title: string;
   body: string;
+  needsAdmin: boolean;
   turma: string | null;
   campus: string | null;
   matricula: string | null;
@@ -24,6 +25,7 @@ class NotificationSendService {
     student_id,
     title,
     body,
+    needsAdmin = false,
     turma = null,
     campus = null,
     matricula = null,
@@ -34,11 +36,11 @@ class NotificationSendService {
       throw new AppError('Não autorizado.', 401);
     }
 
-    if (!student.admin) {
+    if (!student.admin && needsAdmin) {
       throw new AppError('Somente admins estão autorizados.', 401);
     }
 
-    if (!title || !body) {
+    if (!title && !body) {
       throw new AppError('Preencha os campos obrigatórios.', 401);
     }
 

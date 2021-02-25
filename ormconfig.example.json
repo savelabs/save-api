@@ -1,13 +1,24 @@
-{
-  "type": "postgres",
-  "host": "localhost",
-  "port": 5432,
-  "username": "postgres",
-  "password": "password",
-  "database": "save_postgres",
-  "entities": ["./dist/modules/**/infra/typeorm/entities/*.js"],
-  "migrations": ["./dist/shared/infra/typeorm/migrations/*.js"],
-  "cli": {
-    "migrationsDir": "./dist/shared/infra/typeorm/migrations"
+[
+  {
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "password",
+    "database": "save_postgres",
+    "entities": ["./dist/modules/**/infra/typeorm/entities/*.js"],
+    "migrations": ["./dist/shared/infra/typeorm/migrations/*.js"],
+    "cli": {
+      "migrationsDir": "./dist/shared/infra/typeorm/migrations"
+    }
+  },
+  {
+    "name": "mongo",
+    "type": "mongodb",
+    "host": "192.168.99.100",
+    "port": 27017,
+    "database": "save_mongo",
+    "useUnifiedTopology": true,
+    "entities": ["./src/modules/**/infra/typeorm/schemas/*.ts"]
   }
-}
+]
