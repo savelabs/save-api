@@ -6,12 +6,6 @@ import IStudentRepository from '@modules/users/repositories/IStudentRepository';
 import ICreateStudentDTO from '@modules/users/dtos/ICreateStudentDTO';
 import AppError from '@shared/errors/AppError';
 
-interface Data {
-  turma: string | null;
-  campus: string | null;
-  matricula: string | null;
-}
-
 class StudentRepository implements IStudentRepository {
   private ormRepository: Repository<Student>;
 
@@ -19,31 +13,38 @@ class StudentRepository implements IStudentRepository {
     this.ormRepository = getRepository(Student);
   }
 
-  public async findByData({
-    turma = null,
-    campus = null,
-    matricula = null,
-  }: Data): Promise<Student[]> {
-    if (turma) {
-      const studentTurma = await this.ormRepository.find({
-        where: { turma, pushtoken: Not(IsNull()) },
-      });
+  public async findStudentPushtoken(
+    matricula: string,
+  ): Promise<Student | undefined> {
+    const studentMat = await this.ormRepository.findOne({
+      where: { matricula, pushtoken: Not(IsNull()) },
+    });
+    return studentMat;
+  }
 
-      return studentTurma;
-    }
-    if (campus) {
-      const studentCampus = await this.ormRepository.find({
-        where: { campus, pushtoken: Not(IsNull()) },
-      });
-      return studentCampus;
-    }
-    if (matricula) {
-      const studentMat = await this.ormRepository.find({
-        where: { matricula, pushtoken: Not(IsNull()) },
-      });
-      return studentMat;
-    }
-    return this.ormRepository.find({ where: { pushtoken: Not(IsNull()) } });
+  public async findCampusPushtoken(
+    campus: string,
+  ): Promise<Student[] | undefined> {
+    const studentMat = await this.ormRepository.find({
+      where: { campus, pushtoken: Not(IsNull()) },
+    });
+    return studentMat;
+  }
+
+  public async findTurmaPushtoken(
+    turma: string,
+  ): Promise<Student[] | undefined> {
+    const studentMat = await this.ormRepository.find({
+      where: { turma, pushtoken: Not(IsNull()) },
+    });
+    return studentMat;
+  }
+
+  public async findAllPushtoken(): Promise<Student[] | undefined> {
+    const studentMat = await this.ormRepository.find({
+      where: { pushtoken: Not(IsNull()) },
+    });
+    return studentMat;
   }
 
   public async create({

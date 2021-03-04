@@ -8,6 +8,7 @@ export default class GradeController {
   async create(request: Request, response: Response): Promise<Response> {
     const BearerToken = request.headers.authorization;
     const student_id = request.student.id;
+    const havePush = request.params;
 
     if (!BearerToken) {
       throw new AppError('Token inválido', 401);
@@ -20,6 +21,7 @@ export default class GradeController {
     const responseCreateService = await createService.execute({
       token,
       student_id,
+      havePush: Boolean(havePush),
     });
 
     return response.json(responseCreateService);

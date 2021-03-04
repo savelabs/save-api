@@ -14,6 +14,8 @@ notificationsRouter.use(ensureAuthenticated);
 
 notificationsRouter.get('/', gradesController.create);
 
+notificationsRouter.delete('/', notificationsController.delete);
+
 notificationsRouter.post('/', notificationsController.register);
 
 notificationsRouter.post('/send', notificationsController.send);

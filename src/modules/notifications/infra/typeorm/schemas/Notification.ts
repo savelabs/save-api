@@ -13,19 +13,16 @@ class Notification {
   id: ObjectID;
 
   @Column()
-  subject: string;
+  title: string;
 
   @Column()
-  body: string;
+  content: string;
 
   @Column()
   student_id: string;
 
-  @Column({ default: false })
-  read: boolean;
-
   @Column()
-  completedAt: Date;
+  completedAt: number;
 
   @Column()
   tags: 'save' | 'institucional' | 'evento';

@@ -1,79 +1,57 @@
 import { injectable, inject } from 'tsyringe';
 
-import IStudentRepository from '@modules/users/repositories/IStudentRepository';
 import AppError from '@shared/errors/AppError';
 import { SendNotification } from '@shared/infra/http/api';
 
-interface Request {
-  student_id: string;
-  title: string;
-  body: string;
-  needsAdmin: boolean;
-  turma: string | null;
-  campus: string | null;
-  matricula: string | null;
-}
+import IStudentRepository from '@modules/users/repositories/IStudentRepository';
+import INotificationsRepository from '../repositories/INotificationsRepository';
+import ISendNotificationDTO from '../dtos/ISendNotificationDTO';
+
+import Notification from '../infra/typeorm/schemas/Notification';
 
 @injectable()
 class NotificationSendService {
   constructor(
     @inject('StudentRepository')
     private studentsRepository: IStudentRepository,
+
+    @inject('NotificationRepository')
+    private notificationsRepository: INotificationsRepository,
   ) {}
 
   public async execute({
     student_id,
     title,
     body,
-    needsAdmin = false,
-    turma = null,
-    campus = null,
-    matricula = null,
-  }: Request): Promise<any> {
-    const student = await this.studentsRepository.findByMatricula(student_id);
-
-    if (!student) {
-      throw new AppError('Não autorizado.', 401);
-    }
-
-    if (!student.admin && needsAdmin) {
-      throw new AppError('Somente admins estão autorizados.', 401);
-    }
-
+    tags = 'save',
+  }: ISendNotificationDTO): Promise<Notification> {
     if (!title && !body) {
       throw new AppError('Preencha os campos obrigatórios.', 401);
     }
 
-    const students = await this.studentsRepository.findByData({
-      turma,
-      campus,
-      matricula,
-    });
+    const student = await this.studentsRepository.findStudentPushtoken(
+      student_id,
+    );
 
-    const batch: Array<any> = [];
-    const adress = students.map(user => user.pushtoken);
-    const lenghtAdress = adress.length;
-    let i = 0;
-
-    for (i = 0; i < lenghtAdress; i += 100) {
-      const myArray = adress.slice(i, i + 100);
-      batch.push(myArray);
+    if (!student) {
+      throw new AppError('O estudante não possuí pushtoken cadastrado.', 404);
     }
 
-    batch.map(async (adresses: Array<string>) => {
-      try {
-        const response = await SendNotification.post('/send', {
-          to: adresses,
-          title,
-          body,
-        });
-        return response.data;
-      } catch (err) {
-        throw new AppError('Não foi possível enviar a notificação!', 400);
-      }
+    await SendNotification.post('/send', {
+      to: student.pushtoken,
+      title,
+      body,
     });
 
-    return { message: 'Enviado com sucesso!' };
+    const notifications = await this.notificationsRepository.create({
+      title,
+      content: body,
+      student_id: student.matricula,
+      tags,
+      completedAt: Date.now(),
+    });
+
+    return notifications;
   }
 }
 

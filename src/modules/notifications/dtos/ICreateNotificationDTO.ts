@@ -1,5 +1,7 @@
 export default interface ICreateStudentDTO {
-  subject: string;
-  body: string;
+  title: string;
+  content: string;
   student_id: string;
+  tags: 'save' | 'institucional' | 'evento';
+  completedAt: number;
 }

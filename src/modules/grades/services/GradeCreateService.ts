@@ -1,8 +1,13 @@
 import { injectable, inject } from 'tsyringe';
 
-import IGradeRepository from '@modules/grades/repositories/IGradeRepository';
 import AppError from '@shared/errors/AppError';
 import { SuapApi } from '@shared/infra/http/api';
+
+import IGradeRepository from '@modules/grades/repositories/IGradeRepository';
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
+import Notification from '@modules/notifications/infra/typeorm/schemas/Notification';
+import ISendNotificationDTO from '@modules/notifications/dtos/ISendNotificationDTO';
+import NotifyQueue from '@modules/notifications/infra/queues/NotifyQueue';
 import GradesSchemaDTO from '../dtos/GradesSchemaDTO';
 
 import NotifyGradeService from './NotifyGradeService';
@@ -10,6 +15,7 @@ import NotifyGradeService from './NotifyGradeService';
 interface Request {
   token: string;
   student_id: string;
+  havePush?: boolean;
 }
 
 interface PeriodResponse {
@@ -22,9 +28,16 @@ class GradeCreateService {
   constructor(
     @inject('GradesRepository')
     private gradesRepository: IGradeRepository,
+
+    @inject('NotificationRepository')
+    private notificationsRepository: INotificationsRepository,
   ) {}
 
-  public async execute({ token, student_id }: Request): Promise<void> {
+  public async execute({
+    token,
+    student_id,
+    havePush = true,
+  }: Request): Promise<Notification[]> {
     const periodResponse = await SuapApi.get(
       '/minhas-informacoes/meus-periodos-letivos/',
       {
@@ -90,7 +103,11 @@ class GradeCreateService {
         boletins: formattedGrades,
       });
 
-      // retornar
+      const notifications = this.notificationsRepository.findByMatricula(
+        student_id,
+      );
+
+      return notifications;
     }
 
     const updatedData = {
@@ -103,7 +120,12 @@ class GradeCreateService {
 
     if (periodo !== currentPeriod[0]) {
       await this.gradesRepository.update(updatedData);
-      // retornar
+
+      const notifications = this.notificationsRepository.findByMatricula(
+        student_id,
+      );
+
+      return notifications;
     }
 
     const notifyGrades = new NotifyGradeService(this.gradesRepository);
@@ -113,12 +135,88 @@ class GradeCreateService {
       newGrade: formattedGrades,
     });
 
-    if (notifies.length === 0) {
-      console.log('teste');
+    const notificationsSchema: ISendNotificationDTO[] = [];
+
+    notifies.map(notify => {
+      if (notify) {
+        if (notify.updateType === 'nota' && notify.newScore) {
+          const notification: ISendNotificationDTO = {
+            student_id,
+            title: `📝 Sua nota já está disponível!`,
+            body: `Uma nota na disciplina de ${notify.disciplina} foi adicionada, toque para ver.`,
+            matricula: student_id,
+          };
+          notificationsSchema.push(notification);
+        }
+        if (notify.updateType === 'nota' && !notify.newScore) {
+          const notification: ISendNotificationDTO = {
+            student_id,
+            title: `📝 Uma nota foi alterada!`,
+            body: `Uma nota na disciplina de ${notify.disciplina} foi alterada, toque para ver.`,
+            matricula: student_id,
+          };
+          notificationsSchema.push(notification);
+        }
+        if (notify.updateType === 'situacao' && notify.updated === 'Aprovado') {
+          const notification: ISendNotificationDTO = {
+            student_id,
+            title: `🚀 Você foi aprovado(a)!`,
+            body: `Você decolou na disciplina: ${notify.disciplina} e conquistou a aprovação`,
+            matricula: student_id,
+          };
+          notificationsSchema.push(notification);
+        }
+        if (notify.updateType === 'falta') {
+          const notification: ISendNotificationDTO = {
+            student_id,
+            title: `📊 Ausência registrada`,
+            body: `${notify.faltaDifference} ${
+              notify.faltaDifference && notify.faltaDifference > 1
+                ? 'faltas foram registradas'
+                : 'falta foi registrada'
+            } na disciplina: ${notify.disciplina}`,
+            matricula: student_id,
+          };
+          notificationsSchema.push(notification);
+        }
+      }
+      return notificationsSchema;
+    });
+
+    if (notificationsSchema.length === 0) {
+      const notifications = this.notificationsRepository.findByMatricula(
+        student_id,
+      );
+
+      return notifications;
     }
 
+    if (!havePush) {
+      await this.gradesRepository.update(updatedData);
+
+      const notifications = this.notificationsRepository.findByMatricula(
+        student_id,
+      );
+
+      return notifications;
+    }
+
+    notificationsSchema.map(async notification => {
+      await NotifyQueue.add({
+        student_id: notification.student_id,
+        title: notification.title,
+        body: notification.body,
+        tags: 'academico',
+      });
+    });
+
     await this.gradesRepository.update(updatedData);
-    // retornar
+
+    const notifications = this.notificationsRepository.findByMatricula(
+      student_id,
+    );
+
+    return notifications;
   }
 }
 
