@@ -1,6 +1,5 @@
-import { injectable, inject } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
-import IGradeRepository from '@modules/grades/repositories/IGradeRepository';
 import AppError from '@shared/errors/AppError';
 import GradesSchemaDTO from '../dtos/GradesSchemaDTO';
 
@@ -19,11 +18,6 @@ interface Request {
 
 @injectable()
 class NotifyGradeService {
-  constructor(
-    @inject('GradesRepository')
-    private gradesRepository: IGradeRepository,
-  ) {}
-
   public async execute({
     oldGrade,
     newGrade,

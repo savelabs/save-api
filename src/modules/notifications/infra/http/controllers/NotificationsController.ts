@@ -4,17 +4,28 @@ import { container } from 'tsyringe';
 import NotificationTokenService from '@modules/notifications/services/NotificationTokenService';
 import NotificationSaveService from '@modules/notifications/services/NotificationSaveService';
 import NotificationDeleteService from '@modules/notifications/services/NotificationDeleteService';
+import AppError from '@shared/errors/AppError';
 
 export default class NotificationsController {
   async register(request: Request, response: Response): Promise<Response> {
     const student_id = request.student.id;
-    const { pushtoken } = request.body;
+    const { pushtoken, authorized } = request.body;
 
     const registerToken = container.resolve(NotificationTokenService);
+
+    const authHeader = request.headers.authorization;
+
+    if (!authHeader) {
+      throw new AppError('Token não inserido', 401);
+    }
+
+    const [, token] = authHeader.split(' ');
 
     const registertoken = await registerToken.execute({
       student_id,
       pushtoken,
+      authorized,
+      token,
     });
 
     return response.json(registertoken);

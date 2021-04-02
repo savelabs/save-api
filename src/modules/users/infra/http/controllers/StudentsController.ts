@@ -42,7 +42,7 @@ export default class NotificationsController {
         token,
       });
 
-      return response.json({ student, token });
+      return response.json({ student });
     } catch (err) {
       throw new AppError('Token inválido', 401);
     }

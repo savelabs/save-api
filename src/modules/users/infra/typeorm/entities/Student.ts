@@ -62,6 +62,12 @@ class Student {
   @Column({ nullable: true })
   pushtoken?: string;
 
+  @Column({ nullable: true })
+  notification?: boolean;
+
+  @Column({ nullable: true })
+  token?: string;
+
   @CreateDateColumn()
   created_at: Date;
 

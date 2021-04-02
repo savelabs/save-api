@@ -4,10 +4,13 @@ import Student from '@modules/users/infra/typeorm/entities/Student';
 import IStudentRepository from '@modules/users/repositories/IStudentRepository';
 
 import AppError from '@shared/errors/AppError';
+import { TokenQueue } from '../infra/queues/NotifyQueue';
 
 interface Request {
   pushtoken: string;
   student_id: string;
+  authorized?: boolean;
+  token: string;
 }
 
 @injectable()
@@ -16,14 +19,38 @@ class NotificationTokenService {
     @inject('StudentRepository') private studentsRepository: IStudentRepository,
   ) {}
 
-  public async execute({ student_id, pushtoken }: Request): Promise<Student> {
+  public async execute({
+    student_id,
+    pushtoken,
+    authorized,
+    token,
+  }: Request): Promise<Student> {
     const student = await this.studentsRepository.findByMatricula(student_id);
 
     if (!student) {
       throw new AppError('Não autorizado.', 401);
     }
 
-    student.pushtoken = pushtoken;
+    student.token = token;
+    student.notification = authorized;
+
+    if (authorized) {
+      await TokenQueue.add(
+        {
+          student_id,
+          havePush: true,
+          token,
+        },
+        { repeat: { every: 15 * 60000 } }, // 15 minutos
+      );
+    }
+
+    if (pushtoken) {
+      student.notification = authorized;
+      student.pushtoken = pushtoken;
+      const studentUpdated = await this.studentsRepository.save(student);
+      return studentUpdated;
+    }
 
     const studentUpdated = await this.studentsRepository.save(student);
     return studentUpdated;

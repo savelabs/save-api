@@ -8,6 +8,7 @@ import INotificationsRepository from '@modules/notifications/repositories/INotif
 import Notification from '@modules/notifications/infra/typeorm/schemas/Notification';
 import ISendNotificationDTO from '@modules/notifications/dtos/ISendNotificationDTO';
 import NotifyQueue from '@modules/notifications/infra/queues/NotifyQueue';
+import IStudentRepository from '@modules/users/repositories/IStudentRepository';
 import GradesSchemaDTO from '../dtos/GradesSchemaDTO';
 
 import NotifyGradeService from './NotifyGradeService';
@@ -31,6 +32,8 @@ class GradeCreateService {
 
     @inject('NotificationRepository')
     private notificationsRepository: INotificationsRepository,
+
+    @inject('StudentRepository') private studentsRepository: IStudentRepository,
   ) {}
 
   public async execute({
@@ -38,10 +41,19 @@ class GradeCreateService {
     student_id,
     havePush = true,
   }: Request): Promise<Notification[]> {
+    const student = await this.studentsRepository.findByMatricula(student_id);
+
+    if (!student) {
+      throw new AppError('Não autorizado.', 401);
+    }
+
+    student.token = token;
+    await this.studentsRepository.save(student);
+
     const periodResponse = await SuapApi.get(
       '/minhas-informacoes/meus-periodos-letivos/',
       {
-        headers: { Authorization: `JWT ${token}` },
+        headers: { Authorization: `JWT ${student.token}` },
       },
     );
 
@@ -57,7 +69,7 @@ class GradeCreateService {
           const response = await SuapApi.get(
             `/minhas-informacoes/boletim/${periods[i].ano_letivo}/${periods[i].periodo_letivo}`,
             {
-              headers: { Authorization: `JWT ${token}` },
+              headers: { Authorization: `JWT ${student.token}` },
             },
           );
 
@@ -128,7 +140,7 @@ class GradeCreateService {
       return notifications;
     }
 
-    const notifyGrades = new NotifyGradeService(this.gradesRepository);
+    const notifyGrades = new NotifyGradeService();
 
     const notifies = await notifyGrades.execute({
       oldGrade: boletins,
@@ -166,7 +178,11 @@ class GradeCreateService {
           };
           notificationsSchema.push(notification);
         }
-        if (notify.updateType === 'falta') {
+        if (
+          notify.updateType === 'falta' &&
+          notify.faltaDifference &&
+          notify.faltaDifference > 0
+        ) {
           const notification: ISendNotificationDTO = {
             student_id,
             title: `📊 Ausência registrada`,
@@ -184,7 +200,7 @@ class GradeCreateService {
     });
 
     if (notificationsSchema.length === 0) {
-      const notifications = this.notificationsRepository.findByMatricula(
+      const notifications = await this.notificationsRepository.findByMatricula(
         student_id,
       );
 
@@ -194,7 +210,7 @@ class GradeCreateService {
     if (!havePush) {
       await this.gradesRepository.update(updatedData);
 
-      const notifications = this.notificationsRepository.findByMatricula(
+      const notifications = await this.notificationsRepository.findByMatricula(
         student_id,
       );
 
@@ -212,7 +228,7 @@ class GradeCreateService {
 
     await this.gradesRepository.update(updatedData);
 
-    const notifications = this.notificationsRepository.findByMatricula(
+    const notifications = await this.notificationsRepository.findByMatricula(
       student_id,
     );
 

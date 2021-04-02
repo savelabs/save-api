@@ -19,6 +19,6 @@
     "port": 27017,
     "database": "save_mongo",
     "useUnifiedTopology": true,
-    "entities": ["./src/modules/**/infra/typeorm/schemas/*.ts"]
+    "entities": ["./dist/modules/**/infra/typeorm/schemas/*.ts"]
   }
 ]
