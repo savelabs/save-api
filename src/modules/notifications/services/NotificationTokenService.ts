@@ -32,17 +32,27 @@ class NotificationTokenService {
     }
 
     student.token = token;
+
+    if (student.notification) {
+      throw new AppError('Notificação já ativada');
+    }
+
     student.notification = authorized;
 
     if (authorized) {
       await TokenQueue.add(
+        student_id,
         {
           student_id,
           havePush: true,
           token,
         },
-        { repeat: { every: 15 * 60000 } }, // 15 minutos
+        { repeat: { every: 60000 * 15 } }, // 15 minutos
       );
+    }
+
+    if (authorized === false) {
+      await TokenQueue.removeRepeatable(student_id, { every: 60000 * 15 });
     }
 
     if (pushtoken) {

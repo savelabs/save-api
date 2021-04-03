@@ -34,6 +34,7 @@ NotifyQueue.process(async job => {
 });
 
 TokenQueue.process(async job => {
+  console.log(job);
   const { token, student_id } = job.data;
 
   try {
@@ -56,6 +57,7 @@ TokenQueue.process(async job => {
 
 NotifyQueue.on('failed', err => {
   console.log(err);
+  console.log('FALHA');
   Sentry.captureException(err);
 });
 
