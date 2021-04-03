@@ -33,8 +33,10 @@ class NotificationTokenService {
 
     student.token = token;
 
-    if (student.notification) {
-      throw new AppError('Notificação já ativada');
+    if (authorized) {
+      if (student.notification) {
+        throw new AppError('Notificação já ativada');
+      }
     }
 
     student.notification = authorized;
