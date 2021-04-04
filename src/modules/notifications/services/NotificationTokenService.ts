@@ -48,13 +48,13 @@ class NotificationTokenService {
           havePush: true,
           token,
         },
-        { repeat: { every: 60000 }, jobId: student_id }, // 15 minutos
+        { repeat: { every: 60000 * 15 }, jobId: student_id }, // 15 minutos
       );
     }
 
     if (authorized === false) {
       await TokenQueue.removeRepeatable({
-        every: 60000,
+        every: 60000 * 15,
         jobId: student_id,
       });
     }
