@@ -147,8 +147,6 @@ class GradeCreateService {
       newGrade: formattedGrades,
     });
 
-    console.log(boletins);
-
     const notificationsSchema: ISendNotificationDTO[] = [];
 
     notifies.map(notify => {
