@@ -23,6 +23,7 @@ Sentry.init({
 
 NotifyQueue.process(async job => {
   const { student_id, title, body, tags } = job.data as ISendNotificationDTO;
+  console.log('Notificação');
 
   const sendNotification = container.resolve(NotificationSendService);
   await sendNotification.execute({
@@ -35,6 +36,7 @@ NotifyQueue.process(async job => {
 
 TokenQueue.process(async job => {
   const { token, student_id } = job.data;
+  console.log(job);
 
   try {
     const refresh = await SuapApi.post('/autenticacao/token/refresh/', {
