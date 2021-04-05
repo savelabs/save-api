@@ -52,6 +52,7 @@ TokenQueue.process(async job => {
       havePush: true,
     });
   } catch {
+    await job.remove();
     throw new AppError('Token expirado ou inválido');
   }
 });
