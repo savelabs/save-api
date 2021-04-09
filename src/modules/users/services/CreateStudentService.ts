@@ -85,6 +85,7 @@ class CreateStudentService {
         nomeCompleto,
         curso,
         campus,
+        token,
       });
 
       return student;

@@ -69,6 +69,7 @@ class UpdateStudentService {
       student.nomeCompleto = nomeCompleto;
       student.curso = curso;
       student.campus = campus;
+      student.token = token;
 
       const studentUpdated = await this.studentsRepository.save(student);
 

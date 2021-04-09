@@ -17,4 +17,5 @@ export default interface ICreateStudentDTO {
   situacao: string;
   admin: boolean;
   pushtoken?: string | null;
+  token?: string;
 }
