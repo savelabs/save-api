@@ -14,7 +14,6 @@ import GradesSchemaDTO from '../dtos/GradesSchemaDTO';
 import NotifyGradeService from './NotifyGradeService';
 
 interface Request {
-  token: string;
   student_id: string;
   havePush?: boolean;
 }
@@ -37,7 +36,6 @@ class GradeCreateService {
   ) {}
 
   public async execute({
-    token,
     student_id,
     havePush = true,
   }: Request): Promise<Notification[]> {
@@ -46,6 +44,12 @@ class GradeCreateService {
     if (!student) {
       throw new AppError('Não autorizado.', 401);
     }
+
+    const refresh = await SuapApi.post('/autenticacao/token/refresh/', {
+      token: student.token,
+    });
+
+    const { token } = refresh.data;
 
     student.token = token;
     await this.studentsRepository.save(student);

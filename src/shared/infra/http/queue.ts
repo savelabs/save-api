@@ -35,19 +35,12 @@ NotifyQueue.process(async job => {
 });
 
 TokenQueue.process(async job => {
-  const { token, student_id } = job.data;
+  const { student_id } = job.data;
   console.log(job);
 
   try {
-    const refresh = await SuapApi.post('/autenticacao/token/refresh/', {
-      token,
-    });
-
-    const newToken = refresh.data.token;
-
     const checkNotification = container.resolve(GradeCreateService);
     await checkNotification.execute({
-      token: newToken,
       student_id,
       havePush: true,
     });
