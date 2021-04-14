@@ -31,7 +31,7 @@ class NotificationDeleteService {
     }
 
     const checkExists = await this.notificationsRepository.findByMatricula(
-      student_id,
+      student.matricula,
     );
 
     if (!checkExists) {

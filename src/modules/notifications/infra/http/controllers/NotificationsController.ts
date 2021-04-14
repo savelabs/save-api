@@ -51,14 +51,14 @@ export default class NotificationsController {
 
   async delete(request: Request, response: Response): Promise<Response> {
     const student_id = request.student.id;
-    const { id, all } = request.body;
+    const { id, all } = request.query;
 
     const notificationDelete = container.resolve(NotificationDeleteService);
 
     const notificationdelete = await notificationDelete.execute({
       student_id,
-      id,
-      all,
+      id: String(id),
+      all: Boolean(all),
     });
 
     return response.json(notificationdelete);
