@@ -13,7 +13,6 @@ import ISendNotificationDTO from '@modules/notifications/dtos/ISendNotificationD
 import * as Sentry from '@sentry/node';
 import GradeCreateService from '@modules/grades/services/GradeCreateService';
 import AppError from '@shared/errors/AppError';
-import SuapApi from './api';
 
 console.log('Queue started');
 

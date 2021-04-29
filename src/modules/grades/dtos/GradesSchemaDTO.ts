@@ -1,4 +1,5 @@
 export default interface Boletins {
+  codigo_diario: string;
   disciplina: string;
   situacao: string;
   nota_etapa_1: {

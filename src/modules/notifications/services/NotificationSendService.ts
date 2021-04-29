@@ -24,6 +24,8 @@ class NotificationSendService {
     title,
     body,
     tags = 'save',
+    subject,
+    period,
   }: ISendNotificationDTO): Promise<Notification> {
     if (!title && !body) {
       throw new AppError('Preencha os campos obrigatórios.', 401);
@@ -35,6 +37,28 @@ class NotificationSendService {
 
     if (!student) {
       throw new AppError('O estudante não possuí pushtoken cadastrado.', 404);
+    }
+
+    if (subject && period) {
+      await SendNotification.post('/send', {
+        to: student.pushtoken,
+        title,
+        body,
+        data: {
+          period,
+          subject,
+        },
+      });
+
+      const notifications = await this.notificationsRepository.create({
+        title,
+        content: body,
+        student_id: student.matricula,
+        tags,
+        completedAt: Date.now(),
+      });
+
+      return notifications;
     }
 
     await SendNotification.post('/send', {

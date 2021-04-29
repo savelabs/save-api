@@ -4,6 +4,7 @@ import AppError from '@shared/errors/AppError';
 import GradesSchemaDTO from '../dtos/GradesSchemaDTO';
 
 interface UpdateResponse {
+  subjectID: string;
   disciplina: string;
   updateType: 'situacao' | 'nota' | 'falta';
   updated: number | string | GradesSchemaDTO | null;
@@ -29,6 +30,7 @@ class NotifyGradeService {
     const notifyGrades = oldGrade.map((grade, index) => {
       if (grade.situacao !== newGrade[index].situacao) {
         const updateResponse: UpdateResponse = {
+          subjectID: newGrade[index].codigo_diario,
           disciplina: newGrade[index].disciplina,
           updateType: 'situacao',
           updated: newGrade[index].situacao,
@@ -37,6 +39,7 @@ class NotifyGradeService {
       }
       if (grade.nota_etapa_1.nota !== newGrade[index].nota_etapa_1.nota) {
         const updateResponse: UpdateResponse = {
+          subjectID: newGrade[index].codigo_diario,
           disciplina: newGrade[index].disciplina,
           updateType: 'nota',
           updated: newGrade[index].nota_etapa_1.nota,
@@ -46,6 +49,7 @@ class NotifyGradeService {
       }
       if (grade.nota_etapa_1.faltas !== newGrade[index].nota_etapa_1.faltas) {
         const updateResponse: UpdateResponse = {
+          subjectID: newGrade[index].codigo_diario,
           disciplina: newGrade[index].disciplina,
           updateType: 'falta',
           faltaDifference:
@@ -56,6 +60,7 @@ class NotifyGradeService {
       }
       if (grade.nota_etapa_2.nota !== newGrade[index].nota_etapa_2.nota) {
         const updateResponse: UpdateResponse = {
+          subjectID: newGrade[index].codigo_diario,
           disciplina: newGrade[index].disciplina,
           updateType: 'nota',
           updated: newGrade[index].nota_etapa_2.nota,
@@ -65,6 +70,7 @@ class NotifyGradeService {
       }
       if (grade.nota_etapa_2.faltas !== newGrade[index].nota_etapa_2.faltas) {
         const updateResponse: UpdateResponse = {
+          subjectID: newGrade[index].codigo_diario,
           disciplina: newGrade[index].disciplina,
           updateType: 'falta',
           faltaDifference:
@@ -75,6 +81,7 @@ class NotifyGradeService {
       }
       if (grade.nota_etapa_3.nota !== newGrade[index].nota_etapa_3.nota) {
         const updateResponse: UpdateResponse = {
+          subjectID: newGrade[index].codigo_diario,
           disciplina: newGrade[index].disciplina,
           updateType: 'nota',
           updated: newGrade[index].nota_etapa_3.nota,
@@ -84,6 +91,7 @@ class NotifyGradeService {
       }
       if (grade.nota_etapa_3.faltas !== newGrade[index].nota_etapa_3.faltas) {
         const updateResponse: UpdateResponse = {
+          subjectID: newGrade[index].codigo_diario,
           disciplina: newGrade[index].disciplina,
           updateType: 'falta',
           faltaDifference:
@@ -94,6 +102,7 @@ class NotifyGradeService {
       }
       if (grade.nota_etapa_4.nota !== newGrade[index].nota_etapa_4.nota) {
         const updateResponse: UpdateResponse = {
+          subjectID: newGrade[index].codigo_diario,
           disciplina: newGrade[index].disciplina,
           updateType: 'nota',
           updated: newGrade[index].nota_etapa_4.nota,
@@ -103,6 +112,7 @@ class NotifyGradeService {
       }
       if (grade.nota_etapa_4.faltas !== newGrade[index].nota_etapa_4.faltas) {
         const updateResponse: UpdateResponse = {
+          subjectID: newGrade[index].codigo_diario,
           disciplina: newGrade[index].disciplina,
           updateType: 'falta',
           faltaDifference:

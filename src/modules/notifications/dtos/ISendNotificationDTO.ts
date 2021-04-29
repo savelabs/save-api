@@ -6,5 +6,7 @@ export default interface ISendNotificationDTO {
   turma?: string | null;
   campus?: string | null;
   matricula?: string | null;
+  subject?: string;
+  period?: string;
   tags?: 'save' | 'institucional' | 'evento';
 }

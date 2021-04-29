@@ -24,6 +24,12 @@ class Notification {
   @Column()
   completedAt: number;
 
+  @Column({ nullable: true })
+  subject?: string;
+
+  @Column({ nullable: true })
+  period?: string;
+
   @Column()
   tags: 'save' | 'institucional' | 'evento';
 

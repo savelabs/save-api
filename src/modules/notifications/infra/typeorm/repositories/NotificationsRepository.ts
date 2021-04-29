@@ -30,6 +30,8 @@ class NotificationsRepository implements INotificationsRepository {
     content,
     student_id,
     tags,
+    subject = undefined,
+    period = undefined,
     completedAt,
   }: ICreateNotificationDTO): Promise<Notification> {
     const notification = this.ormRepository.create({
@@ -37,6 +39,8 @@ class NotificationsRepository implements INotificationsRepository {
       content,
       student_id,
       tags,
+      subject,
+      period,
       completedAt,
     });
 

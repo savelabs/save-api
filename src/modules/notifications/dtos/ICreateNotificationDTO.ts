@@ -3,5 +3,7 @@ export default interface ICreateStudentDTO {
   content: string;
   student_id: string;
   tags: 'save' | 'institucional' | 'evento';
+  subject?: string;
+  period?: string;
   completedAt: number;
 }

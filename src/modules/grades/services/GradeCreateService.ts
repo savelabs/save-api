@@ -102,6 +102,7 @@ class GradeCreateService {
 
     const formattedGrades = updatedGrades[0].map(virtualClass => {
       return {
+        codigo_diario: virtualClass.codigo_diario,
         disciplina: virtualClass.disciplina,
         situacao: virtualClass.situacao,
         nota_etapa_1: virtualClass.nota_etapa_1,
@@ -161,6 +162,7 @@ class GradeCreateService {
             title: `📝 Sua nota já está disponível!`,
             body: `Uma nota na disciplina de ${notify.disciplina} foi adicionada, toque para ver.`,
             matricula: student_id,
+            subject: notify.subjectID,
           };
           notificationsSchema.push(notification);
         }
@@ -170,6 +172,7 @@ class GradeCreateService {
             title: `📝 Uma nota foi alterada!`,
             body: `Uma nota na disciplina de ${notify.disciplina} foi alterada, toque para ver.`,
             matricula: student_id,
+            subject: notify.subjectID,
           };
           notificationsSchema.push(notification);
         }
@@ -179,6 +182,7 @@ class GradeCreateService {
             title: `🚀 Você foi aprovado(a)!`,
             body: `Você decolou na disciplina: ${notify.disciplina} e conquistou a aprovação`,
             matricula: student_id,
+            subject: notify.subjectID,
           };
           notificationsSchema.push(notification);
         }
@@ -196,6 +200,7 @@ class GradeCreateService {
                 : 'falta foi registrada'
             } na disciplina: ${notify.disciplina}`,
             matricula: student_id,
+            subject: notify.subjectID,
           };
           notificationsSchema.push(notification);
         }
@@ -226,6 +231,8 @@ class GradeCreateService {
         student_id: notification.student_id,
         title: notification.title,
         body: notification.body,
+        subject: notification.subject,
+        period: currentPeriod[0],
         tags: 'academico',
       });
     });
