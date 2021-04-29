@@ -35,6 +35,18 @@ class TicketsRepository implements ITicketsRepository {
     return tickets;
   }
 
+  public async delete(id: string): Promise<Ticket> {
+    const ticket = await this.ormRepository.findOne(id);
+
+    if (!ticket) {
+      throw new AppError('Este ticket não existe', 404);
+    }
+
+    await this.ormRepository.delete(ticket);
+
+    return ticket;
+  }
+
   public async create({
     matricula,
     category,

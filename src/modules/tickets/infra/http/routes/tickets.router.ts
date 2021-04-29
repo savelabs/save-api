@@ -14,4 +14,6 @@ ticketsRouter.get('/', ticketsController.show);
 
 ticketsRouter.post('/', ticketsController.create);
 
+ticketsRouter.delete('/', ticketsController.delete);
+
 export default ticketsRouter;

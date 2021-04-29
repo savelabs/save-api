@@ -4,5 +4,6 @@ import Ticket from '../infra/typeorm/schemas/Ticket';
 export default interface ITicketsRepository {
   create(data: ICreateTicketDTO): Promise<Ticket>;
   findByMatricula(matricula: string): Promise<Ticket[]>;
+  delete(id: string): Promise<Ticket>;
   find(): Promise<[Ticket[], number]>;
 }

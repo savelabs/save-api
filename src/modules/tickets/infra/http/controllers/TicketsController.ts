@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import TicketCreateService from '@modules/tickets/services/TicketCreateService';
 import TicketListService from '@modules/tickets/services/TicketListService';
 import AppError from '@shared/errors/AppError';
+import TicketDeleteService from '@modules/tickets/services/TicketDeleteService';
 
 export default class TicketsController {
   async create(request: Request, response: Response): Promise<Response> {
@@ -46,5 +47,19 @@ export default class TicketsController {
     });
 
     return response.json(listtickets);
+  }
+
+  async delete(request: Request, response: Response): Promise<Response> {
+    const student_id = request.student.id;
+    const { id } = request.query;
+
+    const ticketDelete = container.resolve(TicketDeleteService);
+
+    const ticketdelete = await ticketDelete.execute({
+      student_id,
+      id: !id ? undefined : String(id),
+    });
+
+    return response.json(ticketdelete);
   }
 }
