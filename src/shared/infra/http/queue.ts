@@ -21,7 +21,14 @@ Sentry.init({
 });
 
 NotifyQueue.process(async job => {
-  const { student_id, title, body, tags } = job.data as ISendNotificationDTO;
+  const {
+    student_id,
+    title,
+    body,
+    tags,
+    period,
+    subject,
+  } = job.data as ISendNotificationDTO;
   console.log('Notificação');
 
   const sendNotification = container.resolve(NotificationSendService);
@@ -30,6 +37,8 @@ NotifyQueue.process(async job => {
     title,
     body,
     tags,
+    period,
+    subject,
   });
 });
 
